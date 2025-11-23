@@ -1,6 +1,6 @@
-# This Daily Habits & Activities Tracker Application help you to build daily habits and activities consistency, one at a time. Focus on what matters most. Daily Habit Tracker Developed by Mahendran Krishnan
+# This Daily Habits & Activities Tracker Application help you to build daily habits and activities , one at a time. Focus on what matters most. 
 
-A beautiful and modern daily habit tracking application built with React, TypeScript, Fastify, and PostgreSQL.
+Modern daily habit tracking application built with React, TypeScript, Fastify, and PostgreSQL.
 
 ## Features
 
