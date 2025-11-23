@@ -1,4 +1,4 @@
-# Daily Habit Tracker Developed by Mahendran Krishnan
+# This Daily Habits & Activities Tracker Application help you to build daily habits and activities consistency, one at a time. Focus on what matters most. Daily Habit Tracker Developed by Mahendran Krishnan
 
 A beautiful and modern daily habit tracking application built with React, TypeScript, Fastify, and PostgreSQL.
 
@@ -64,11 +64,11 @@ To stop and remove all data:
 docker-compose down -v
 ```
 
-**Alternative: Using npm scripts**
+**You can also use to Alternative: Using npm scripts**
 ```bash
-npm run db:up      # Start PostgreSQL
-npm run db:down    # Stop PostgreSQL
-npm run db:logs    # View logs
+npm run db:up      # Start the PostgreSQL
+npm run db:down    # Stop the PostgreSQL
+npm run db:logs    # View the logs
 npm run db:shell   # Open PostgreSQL shell
 ```
 
@@ -81,12 +81,12 @@ cp backend/env.example backend/.env
 
 2. The default `.env` file is already configured to work with the Docker PostgreSQL instance:
 ```
-PORT=3001
+PORT=3010
 DB_HOST=localhost
 DB_PORT=5434
-DB_USER=postgres
-DB_PASSWORD=postgres
-DB_NAME=habits
+DB_USER=Testpostgres
+DB_PASSWORD=Passwordpostgres
+DB_NAME=Testhabits
 ```
 
 **Using your existing PostgreSQL instance instead?**
@@ -95,7 +95,7 @@ If you want to use your existing PostgreSQL on port 5432, update `backend/.env` 
 - `DB_USER`, `DB_PASSWORD`, and `DB_NAME` as appropriate
 - Make sure the `habits` database exists: `CREATE DATABASE habits;`
 
-### 4. Run Database Migrations
+### 4. Run Database Migrations to create tables and seeds to populate the static data
 
 ```bash
 cd backend
@@ -111,7 +111,7 @@ npm run dev
 ```
 
 This will start:
-- Backend server on http://localhost:3001
+- Backend server on http://localhost:3011
 - Frontend server on http://localhost:3010
 
 ## Project Structure
