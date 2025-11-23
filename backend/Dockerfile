@@ -41,7 +41,7 @@ COPY start.sh ./start.sh
 RUN chmod +x ./start.sh
 
 # Expose port
-EXPOSE 3001
+EXPOSE 3010
 
 CMD ["/app/start.sh"]
 

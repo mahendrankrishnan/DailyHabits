@@ -1,0 +1,136 @@
+.session-timeout-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.session-timeout-modal {
+  background: white;
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.session-timeout-header {
+  margin-bottom: 24px;
+}
+
+.session-timeout-header h2 {
+  margin: 0;
+  font-size: 1.75rem;
+  color: #1f2937;
+  font-weight: 600;
+}
+
+.session-timeout-content {
+  margin-bottom: 32px;
+}
+
+.session-timeout-message {
+  font-size: 1.1rem;
+  color: #4b5563;
+  margin: 0 0 16px 0;
+  line-height: 1.6;
+}
+
+.session-timeout-warning {
+  font-size: 1rem;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.time-remaining {
+  color: #dc2626;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.session-timeout-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.session-timeout-actions .btn {
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.session-timeout-actions .btn-primary {
+  background: #667eea;
+  color: white;
+}
+
+.session-timeout-actions .btn-primary:hover {
+  background: #5568d3;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.session-timeout-actions .btn-secondary {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.session-timeout-actions .btn-secondary:hover {
+  background: #d1d5db;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 640px) {
+  .session-timeout-modal {
+    padding: 24px;
+    margin: 20px;
+  }
+
+  .session-timeout-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .session-timeout-actions {
+    flex-direction: column;
+  }
+
+  .session-timeout-actions .btn {
+    width: 100%;
+  }
+}
+

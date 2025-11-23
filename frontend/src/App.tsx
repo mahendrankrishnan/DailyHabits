@@ -1,12 +1,14 @@
-import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import { ChangeEvent, FormEvent, useEffect, useState, useCallback } from 'react';
 import HabitList from './components/Habit/HabitList';
 import HabitForm from './components/Habit/HabitForm';
 import AIChat from './components/OpenAI/AIChat';
 import WeeklyView from './components/Weekly-Views/WeeklyView';
 import Logo from './components/Logo';
 import Footer from './components/Footer/Footer';
+import SessionTimeoutModal from './components/SessionTimeout/SessionTimeoutModal';
 import { Habit } from './types';
 import { getHabits, createHabit, updateHabit, deleteHabit } from './services/apiServices';
+import { useSessionTimeout } from './hooks/useSessionTimeout';
 import './App.css';
 
 const loginConfig = {
@@ -35,13 +37,27 @@ function App() {
   const [loginForm, setLoginForm] = useState(initialLoginState);
   const [loginError, setLoginError] = useState('');
 
+  const handleLogout = useCallback(() => {
+    sessionStorage.removeItem('loggedInUser');
+    setIsLoggedIn(false);
+    setCurrentUser('');
+  }, []);
+
+  // I want Session timeout configuration: 25 minutes warning, 30 minutes total
+  const sessionTimeout = useSessionTimeout({
+    warningTime: 25 * 60 * 1000, // 25 minutes in milliseconds
+    logoutTime: 30 * 60 * 1000, // 30 minutes in milliseconds
+    onLogout: handleLogout,
+    enabled: isLoggedIn,
+  });
+
   const loadHabits = async (search?: string) => {
     try {
       setLoading(true);
       const data = await getHabits(search);
       setHabits(data.habits);
     } catch (error) {
-      console.error('Failed to load habits:', error);
+      console.error('Failed to load habits, look at the logs for more details:', error);
     } finally {
       setLoading(false);
     }
@@ -140,11 +156,6 @@ function App() {
     setLoginError('Invalid username, password, or phone number.');
   };
 
-  const handleLogout = () => {
-    sessionStorage.removeItem('loggedInUser');
-    setIsLoggedIn(false);
-    setCurrentUser('');
-  };
 
   if (!isLoggedIn) {
     return (
@@ -207,14 +218,21 @@ function App() {
 
   return (
     <div className="app">
+      {sessionTimeout.showWarning && (
+        <SessionTimeoutModal
+          timeRemaining={sessionTimeout.timeRemaining}
+          onStaySignedIn={sessionTimeout.handleStaySignedIn}
+          onSignOut={sessionTimeout.handleSignOut}
+        />
+      )}
       <header className="app-header">
         <div className="header-row">
           <h1>📅 DHA Tracker</h1>
-          <div className="header-divider">-</div>
+          <div className="header-divider"></div>
           <div className="welcome-section">
             <span>Welcome {currentUser}</span>
-            <div className="header-divider">|</div>
-            <button type="button" className="btn btn-secondary btn-small" onClick={handleLogout}>
+            <div className="header-divider"></div>
+            <button type="button" className="btn btn-primary btn-small" onClick={handleLogout}>
               Logout
             </button>
           </div>

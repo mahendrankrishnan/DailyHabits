@@ -20,18 +20,18 @@ async function start() {
     });
   });
 
-  // Register CORS
+  // Here I am registering CORS
   await fastify.register(cors, {
     origin: true,
     credentials: true,
   });
 
-  // Register routes
+  // havr to register the routes here
   await fastify.register(HabitController);
   await fastify.register(AIController);
 
   // Start server
-  const port = parseInt(process.env.PORT || '3001');
+  const port = parseInt(process.env.PORT || '3010');
   const host = '0.0.0.0';
 
   try {
