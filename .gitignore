@@ -1,0 +1,19 @@
+node_modules/
+dist/
+build/
+.env
+*.log
+.DS_Store
+*.local
+
+# Drizzle
+drizzle/
+*.sqlite
+*.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+

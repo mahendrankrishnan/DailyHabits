@@ -1,0 +1,12 @@
+# Frontend .dockerignore
+node_modules
+npm-debug.log
+# Note: .env is NOT ignored so it can be used during build
+# .env.local is still ignored for security
+.env.local
+.git
+.gitignore
+.DS_Store
+dist
+*.log
+

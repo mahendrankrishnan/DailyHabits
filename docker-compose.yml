@@ -1,0 +1,69 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: habit-tracker-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: habits
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - habit-tracker-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: habit-tracker-backend
+    environment:
+      PORT: 3001
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: habits
+      NODE_ENV: production
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+    ports:
+      - "3011:3001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./backend/drizzle:/app/drizzle
+    restart: unless-stopped
+    networks:
+      - habit-tracker-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_LOGIN_USERNAME: ${VITE_LOGIN_USERNAME:-}
+        VITE_LOGIN_PASSWORD: ${VITE_LOGIN_PASSWORD:-}
+        VITE_LOGIN_PHONE: ${VITE_LOGIN_PHONE:-}
+    container_name: habit-tracker-frontend
+    ports:
+      - "3010:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - habit-tracker-network
+
+volumes:
+  postgres_data:
+
+networks:
+  habit-tracker-network:
+    driver: bridge

@@ -1,0 +1,273 @@
+.weekly-view-container {
+  width: 100%;
+}
+
+.weekly-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.week-navigation {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.week-info {
+  text-align: center;
+}
+
+.week-info h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #1f2937;
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  color: #667eea;
+  cursor: pointer;
+  font-size: 0.875rem;
+  text-decoration: underline;
+  padding: 4px 0;
+}
+
+.btn-link:hover {
+  color: #764ba2;
+}
+
+.btn-icon-small {
+  background: #e5e7eb;
+  border: none;
+  border-radius: 6px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: all 0.2s;
+}
+
+.btn-icon-small:hover {
+  background: #d1d5db;
+  transform: scale(1.1);
+}
+
+.weekly-grid {
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  background: white;
+}
+
+.weekly-grid-header {
+  display: grid;
+  grid-template-columns: 200px repeat(7, 1fr);
+  background: #f9fafb;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.habit-name-header {
+  padding: 16px;
+  font-weight: 700;
+  color: #374151;
+  border-right: 2px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+}
+
+.day-header {
+  padding: 12px 8px;
+  text-align: center;
+  border-right: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.day-header:last-child {
+  border-right: none;
+}
+
+.day-header.today {
+  background: #dbeafe;
+  font-weight: 600;
+}
+
+.day-name {
+  font-size: 0.875rem;
+  color: #6b7280;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.day-header.today .day-name {
+  color: #1e40af;
+}
+
+.day-date {
+  font-size: 1rem;
+  color: #1f2937;
+  font-weight: 600;
+}
+
+.day-header.today .day-date {
+  color: #1e40af;
+}
+
+.weekly-grid-body {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.weekly-grid-row {
+  display: grid;
+  grid-template-columns: 200px repeat(7, 1fr);
+  border-bottom: 1px solid #e5e7eb;
+  transition: background-color 0.2s;
+}
+
+.weekly-grid-row:hover {
+  background: #f9fafb;
+}
+
+.weekly-grid-row:last-child {
+  border-bottom: none;
+}
+
+.habit-name-cell {
+  padding: 16px;
+  border-right: 2px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  border-left: 4px solid;
+  background: white;
+}
+
+.habit-name {
+  font-weight: 600;
+  color: #1f2937;
+  word-break: break-word;
+}
+
+.day-cell {
+  padding: 12px;
+  border-right: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+}
+
+.day-cell:last-child {
+  border-right: none;
+}
+
+.day-cell.today {
+  background: #eff6ff;
+}
+
+.day-checkbox {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid #d1d5db;
+  background: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  transition: all 0.2s;
+  padding: 0;
+}
+
+.day-checkbox:hover:not(:disabled) {
+  transform: scale(1.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.day-checkbox.checked {
+  background: #f0fdf4;
+  border-width: 2px;
+}
+
+.day-checkbox:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.loading-spinner {
+  animation: spin 1s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #6b7280;
+}
+
+@media (max-width: 1024px) {
+  .weekly-grid-header,
+  .weekly-grid-row {
+    grid-template-columns: 150px repeat(7, 1fr);
+  }
+
+  .habit-name-header,
+  .habit-name-cell {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .weekly-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .week-navigation {
+    justify-content: center;
+  }
+
+  .weekly-grid-header,
+  .weekly-grid-row {
+    grid-template-columns: 120px repeat(7, 1fr);
+  }
+
+  .day-header,
+  .day-cell {
+    padding: 8px 4px;
+  }
+
+  .day-checkbox {
+    width: 28px;
+    height: 28px;
+    font-size: 1rem;
+  }
+
+  .day-name {
+    font-size: 0.75rem;
+  }
+
+  .day-date {
+    font-size: 0.875rem;
+  }
+}
+
