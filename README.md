@@ -33,22 +33,23 @@ Modern daily habit tracking application built with React, TypeScript, Fastify, a
 ```mermaid
 flowchart LR
     subgraph Frontend [Frontend - React App]
-        A[React 18<br/>TypeScript<br/>Vite<br/>Axios]
+        A["React 18\nTypeScript\nVite\nAxios"]
     end
 
     subgraph Backend [Backend - Node.js Server]
-        B[Fastify API<br/>TypeScript]
-        C[Drizzle ORM]
+        B["Fastify API\nTypeScript"]
+        C["Drizzle ORM"]
     end
 
     subgraph Database [Database Layer]
         D[(PostgreSQL)]
     end
 
-    A -->|HTTP Requests (Axios)| B
-    B -->|Queries / Transactions| C
+    A -->|HTTP Requests| B
+    B -->|ORM Queries| C
     C -->|SQL| D
 ```
+
 ## Setup
 
 ### 1. Install dependencies
