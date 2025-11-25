@@ -29,6 +29,26 @@ Modern daily habit tracking application built with React, TypeScript, Fastify, a
 - Node.js 18+ and npm
 - Docker and Docker Compose (for PostgreSQL)
 
+## Architecture Diagram
+```mermaid
+flowchart LR
+    subgraph Frontend [Frontend - React App]
+        A[React 18<br/>TypeScript<br/>Vite<br/>Axios]
+    end
+
+    subgraph Backend [Backend - Node.js Server]
+        B[Fastify API<br/>TypeScript]
+        C[Drizzle ORM]
+    end
+
+    subgraph Database [Database Layer]
+        D[(PostgreSQL)]
+    end
+
+    A -->|HTTP Requests (Axios)| B
+    B -->|Queries / Transactions| C
+    C -->|SQL| D
+```
 ## Setup
 
 ### 1. Install dependencies
@@ -66,7 +86,7 @@ docker-compose down -v
 
 **You can also use to Alternative: Using npm scripts**
 ```bash
-npm run db:up      # Start the PostgreSQL
+npm run db:up      # Start the PostgreSQL DB
 npm run db:down    # Stop the PostgreSQL
 npm run db:logs    # View the logs
 npm run db:shell   # Open PostgreSQL shell
@@ -74,10 +94,7 @@ npm run db:shell   # Open PostgreSQL shell
 
 ### 3. Configure Database Connection
 
-1. Copy the backend environment file:
-```bash
-cp backend/env.example backend/.env
-```
+1. Create the environment file called .env under backend folder:
 
 2. The default `.env` file is already configured to work with the Docker PostgreSQL instance:
 ```
