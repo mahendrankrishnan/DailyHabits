@@ -6,7 +6,7 @@ import './HabitCard.css';
 interface HabitCardProps {
   habit: Habit;
   onEdit: (habit: Habit) => void;
-  onDelete: (id: number) => void;
+  onDelete: (id: number, name: string) => void;
   onUpdate: () => void;
 }
 
@@ -14,7 +14,16 @@ function HabitCard({ habit, onEdit, onDelete, onUpdate }: HabitCardProps) {
   const [todayLog, setTodayLog] = useState<HabitLog | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const today = new Date().toISOString().split('T')[0];
+  // Get local date in YYYY-MM-DD format (not UTC)
+  const getToday = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+  
+  const today = getToday();
 
   useEffect(() => {
     loadTodayLog();
@@ -62,7 +71,7 @@ function HabitCard({ habit, onEdit, onDelete, onUpdate }: HabitCardProps) {
           <button className="btn-icon" onClick={() => onEdit(habit)} title="Edit">
             ✏️
           </button>
-          <button className="btn-icon" onClick={() => onDelete(habit.id)} title="Delete">
+          <button className="btn-icon" onClick={() => onDelete(habit.id, habit.name)} title="Delete">
             🗑️
           </button>
         </div>

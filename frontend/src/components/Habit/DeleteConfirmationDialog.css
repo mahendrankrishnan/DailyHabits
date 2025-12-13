@@ -1,0 +1,136 @@
+.delete-confirmation-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.delete-confirmation-modal {
+  background: white;
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.delete-confirmation-header {
+  margin-bottom: 24px;
+}
+
+.delete-confirmation-header h2 {
+  margin: 0;
+  font-size: 1.75rem;
+  color: #1f2937;
+  font-weight: 600;
+}
+
+.delete-confirmation-content {
+  margin-bottom: 32px;
+}
+
+.delete-confirmation-message {
+  font-size: 1.1rem;
+  color: #4b5563;
+  margin: 0 0 16px 0;
+  line-height: 1.6;
+}
+
+.delete-confirmation-message strong {
+  color: #1f2937;
+  font-weight: 600;
+}
+
+.delete-confirmation-warning {
+  font-size: 1rem;
+  color: #dc2626;
+  margin: 0;
+  line-height: 1.6;
+  font-weight: 500;
+}
+
+.delete-confirmation-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.delete-confirmation-actions .btn {
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.delete-confirmation-actions .btn-secondary {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.delete-confirmation-actions .btn-secondary:hover {
+  background: #d1d5db;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.delete-confirmation-actions .btn-danger {
+  background: #dc2626;
+  color: white;
+}
+
+.delete-confirmation-actions .btn-danger:hover {
+  background: #b91c1c;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+}
+
+@media (max-width: 640px) {
+  .delete-confirmation-modal {
+    padding: 24px;
+    margin: 20px;
+  }
+
+  .delete-confirmation-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .delete-confirmation-actions {
+    flex-direction: column;
+  }
+
+  .delete-confirmation-actions .btn {
+    width: 100%;
+  }
+}
+

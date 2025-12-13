@@ -5,7 +5,7 @@ import './HabitList.css';
 interface HabitListProps {
   habits: Habit[];
   onEdit: (habit: Habit) => void;
-  onDelete: (id: number) => void;
+  onDelete: (id: number, name: string) => void;
   onUpdate: () => void;
 }
 

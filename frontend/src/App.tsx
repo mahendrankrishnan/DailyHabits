@@ -6,6 +6,7 @@ import WeeklyView from './components/Weekly-Views/WeeklyView';
 import Logo from './components/Logo';
 import Footer from './components/Footer/Footer';
 import SessionTimeoutModal from './components/SessionTimeout/SessionTimeoutModal';
+import DeleteConfirmationDialog from './components/Habit/DeleteConfirmationDialog';
 import { Habit } from './types';
 import { getHabits, createHabit, updateHabit, deleteHabit } from './services/apiServices';
 import { useSessionTimeout } from './hooks/useSessionTimeout';
@@ -36,6 +37,7 @@ function App() {
   const [currentUser, setCurrentUser] = useState('');
   const [loginForm, setLoginForm] = useState(initialLoginState);
   const [loginError, setLoginError] = useState('');
+  const [deleteDialog, setDeleteDialog] = useState<{ habitId: number; habitName: string } | null>(null);
 
   const handleLogout = useCallback(() => {
     sessionStorage.removeItem('loggedInUser');
@@ -102,16 +104,25 @@ function App() {
     }
   };
 
-  const handleDeleteHabit = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this habit?')) {
-      return;
-    }
+  const handleDeleteClick = (id: number, name: string) => {
+    setDeleteDialog({ habitId: id, habitName: name });
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteDialog) return;
+    
     try {
-      await deleteHabit(id);
+      await deleteHabit(deleteDialog.habitId);
       await loadHabits(searchQuery);
+      setDeleteDialog(null);
     } catch (error) {
       console.error('Failed to delete habit:', error);
+      setDeleteDialog(null);
     }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteDialog(null);
   };
 
   const handleEditClick = (habit: Habit) => {
@@ -225,6 +236,13 @@ function App() {
           onSignOut={sessionTimeout.handleSignOut}
         />
       )}
+      {deleteDialog && (
+        <DeleteConfirmationDialog
+          habitName={deleteDialog.habitName}
+          onConfirm={handleDeleteConfirm}
+          onCancel={handleDeleteCancel}
+        />
+      )}
       <header className="app-header">
         <div className="header-row">
           <h1>📅 DHA Tracker</h1>
@@ -282,7 +300,7 @@ function App() {
               <HabitList
                 habits={habits}
                 onEdit={handleEditClick}
-                onDelete={handleDeleteHabit}
+                onDelete={handleDeleteClick}
                 onUpdate={() => loadHabits(searchQuery)}
               />
             )}
