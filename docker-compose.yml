@@ -44,8 +44,8 @@ services:
 
   frontend:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./frontend/Dockerfile
       args:
         VITE_LOGIN_USERNAME: ${VITE_LOGIN_USERNAME:-}
         VITE_LOGIN_PASSWORD: ${VITE_LOGIN_PASSWORD:-}
