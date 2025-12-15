@@ -3,8 +3,17 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Note: Vite will automatically read environment variables from .env file during build
-# Build args are optional - if not provided, .env file will be used
+# Accept build arguments for Vite environment variables
+# These can be passed from docker-compose.yml or will be empty if not provided
+ARG VITE_LOGIN_USERNAME
+ARG VITE_LOGIN_PASSWORD
+ARG VITE_LOGIN_PHONE
+
+# Set as environment variables for Vite to read during build
+# Vite reads environment variables prefixed with VITE_ at build time
+ENV VITE_LOGIN_USERNAME=${VITE_LOGIN_USERNAME}
+ENV VITE_LOGIN_PASSWORD=${VITE_LOGIN_PASSWORD}
+ENV VITE_LOGIN_PHONE=${VITE_LOGIN_PHONE}
 
 # Copy package files
 COPY package*.json ./
@@ -20,11 +29,12 @@ COPY index.html ./
 COPY src ./src
 COPY public ./public
 
-# Copy .env file (for Vite to read during build)
-# Vite automatically loads .env files from the project root
-COPY .env* ./
+# Note: Environment variables are set via build args (from docker-compose.yml)
+# docker-compose.yml automatically reads .env from project root and passes
+# VITE_LOGIN_* variables as build args, which are then set as ENV above
 
 # Build the application
+# Vite will use the environment variables set above or from .env file
 RUN npm run build
 
 # Production stage with nginx

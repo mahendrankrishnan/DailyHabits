@@ -38,8 +38,6 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    volumes:
-      - ./backend/drizzle:/app/drizzle
     restart: unless-stopped
     networks:
       - habit-tracker-network
