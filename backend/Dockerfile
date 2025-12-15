@@ -13,7 +13,10 @@ RUN npm install
 # Copy source code
 COPY src ./src
 COPY drizzle.config.ts ./
-COPY drizzle ./drizzle
+
+# Generate drizzle migrations (creates drizzle/ directory if it doesn't exist)
+# This handles the case where the repo is cloned fresh and drizzle/ is gitignored
+RUN npm run db:generate || echo "Migration generation completed or skipped"
 
 # Build the application
 RUN npm run build
