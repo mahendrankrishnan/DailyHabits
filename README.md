@@ -52,6 +52,12 @@ flowchart LR
 
 ## Setup
 
+# Install everything to docker by using the following command 
+```bash
+docker compose --env-file .env up -d
+```
+# Install step by step to docker by using the following commands 
+
 ### 1. Install dependencies
 
 From the root directory:

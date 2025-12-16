@@ -3,9 +3,10 @@ services:
     image: postgres:16-alpine
     container_name: habit-tracker-db
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: habits
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-habits}
+  
     ports:
       - "5434:5432"
     volumes:
@@ -28,9 +29,9 @@ services:
       PORT: 3001
       DB_HOST: postgres
       DB_PORT: 5432
-      DB_USER: postgres
-      DB_PASSWORD: postgres
-      DB_NAME: habits
+      DB_USER: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      DB_NAME: ${POSTGRES_DB:-habits}
       NODE_ENV: production
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
     ports:
