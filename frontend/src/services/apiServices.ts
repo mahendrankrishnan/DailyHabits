@@ -59,3 +59,15 @@ export const getLogsForDateRange = async (startDate: string, endDate: string) =>
   return response.data;
 };
 
+export const login = async (credentials: { email: string; phone: string; password: string }) => {
+  // Login endpoint uses a different port (4501)
+  const authApi = axios.create({
+    baseURL: 'http://localhost:4501/api',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  const response = await authApi.post('/auth/login', credentials);
+  return response.data;
+};
+
