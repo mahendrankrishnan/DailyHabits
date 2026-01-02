@@ -8,22 +8,11 @@ import Footer from './components/Footer/Footer';
 import SessionTimeoutModal from './components/SessionTimeout/SessionTimeoutModal';
 import DeleteConfirmationDialog from './components/Habit/DeleteConfirmationDialog';
 import { Habit } from './types';
-import { getHabits, createHabit, updateHabit, deleteHabit } from './services/apiServices';
+import { getHabits, createHabit, updateHabit, deleteHabit, login } from './services/apiServices';
 import { useSessionTimeout } from './hooks/useSessionTimeout';
 import './App.css';
 
-const loginConfig = {
-  username: (import.meta.env.VITE_LOGIN_USERNAME ?? '').trim(),
-  password: import.meta.env.VITE_LOGIN_PASSWORD ?? '',
-  phone: (import.meta.env.VITE_LOGIN_PHONE ?? '').trim(),
-};
-
-const isLoginConfigured =
-  Boolean(loginConfig.username) &&
-  Boolean(loginConfig.password) &&
-  Boolean(loginConfig.phone);
-
-const initialLoginState = { username: '', password: '', phone: '' };
+const initialLoginState = { email: '', password: '', phone: '' };
 
 function App() {
   const [habits, setHabits] = useState<Habit[]>([]);
@@ -37,6 +26,7 @@ function App() {
   const [currentUser, setCurrentUser] = useState('');
   const [loginForm, setLoginForm] = useState(initialLoginState);
   const [loginError, setLoginError] = useState('');
+  const [loginLoading, setLoginLoading] = useState(false);
   const [deleteDialog, setDeleteDialog] = useState<{ habitId: number; habitName: string } | null>(null);
 
   const handleLogout = useCallback(() => {
@@ -135,36 +125,69 @@ function App() {
     setEditingHabit(null);
   };
 
-  const handleLoginChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    setLoginForm((prev) => ({ ...prev, [name]: value }));
+  // Format phone number as (XXX) XXX-XXXX
+  const formatPhoneNumber = (value: string): string => {
+    // Remove all non-digit characters
+    const phoneNumber = value.replace(/\D/g, '');
+    
+    // Limit to 10 digits
+    const phoneNumberDigits = phoneNumber.slice(0, 10);
+    
+    // Format based on length
+    if (phoneNumberDigits.length === 0) {
+      return '';
+    } else if (phoneNumberDigits.length <= 3) {
+      return `(${phoneNumberDigits}`;
+    } else if (phoneNumberDigits.length <= 6) {
+      return `(${phoneNumberDigits.slice(0, 3)}) ${phoneNumberDigits.slice(3)}`;
+    } else {
+      return `(${phoneNumberDigits.slice(0, 3)}) ${phoneNumberDigits.slice(3, 6)}-${phoneNumberDigits.slice(6)}`;
+    }
   };
 
-  const handleLoginSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleLoginChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    
+    // Format phone number if it's the phone field
+    if (name === 'phone') {
+      const formattedPhone = formatPhoneNumber(value);
+      setLoginForm((prev) => ({ ...prev, [name]: formattedPhone }));
+    } else {
+      setLoginForm((prev) => ({ ...prev, [name]: value }));
+    }
+  };
+
+  const handleLoginSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setLoginError('');
+    setLoginLoading(true);
 
-    if (!isLoginConfigured) {
-      setLoginError('Login is not configured. Please set credentials in the .env file.');
-      return;
-    }
+    try {
+      const credentials = {
+        email: loginForm.email.trim(),
+        phone: loginForm.phone.trim(),
+        password: loginForm.password,
+      };
 
-    const normalizedUsername = loginForm.username.trim();
-    const normalizedPhone = loginForm.phone.trim();
-
-    if (
-      normalizedUsername === loginConfig.username &&
-      loginForm.password === loginConfig.password &&
-      normalizedPhone === loginConfig.phone
-    ) {
-      sessionStorage.setItem('loggedInUser', normalizedUsername);
-      setCurrentUser(normalizedUsername);
+      await login(credentials);
+      
+      // Store user information (adjust based on actual API response)
+      const userEmail = credentials.email;
+      sessionStorage.setItem('loggedInUser', userEmail);
+      setCurrentUser(userEmail);
       setIsLoggedIn(true);
-      setLoginError('');
       setLoginForm(initialLoginState);
-      return;
+      setLoginError('');
+    } catch (error: any) {
+      console.error('Login failed:', error);
+      setLoginError(
+        error.response?.data?.message || 
+        error.message || 
+        'Invalid email, password, or phone number. Please try again.'
+      );
+    } finally {
+      setLoginLoading(false);
     }
-
-    setLoginError('Invalid username, password, or phone number.');
   };
 
 
@@ -175,18 +198,18 @@ function App() {
         <div className="login-card">
           <h2>DHA Tracker Secure Login</h2>
           <p className="login-subtitle">
-            Enter the username, password, and phone to securely access the application. 
+            Enter your email, password, and phone to securely access the application. 
           </p>
           <form className="login-form" onSubmit={handleLoginSubmit}>
             <label className="input-group">
-              <span>Username</span>
+              <span>Email</span>
               <input
                 autoFocus
-                name="username"
-                type="text"
-                value={loginForm.username}
+                name="email"
+                type="email"
+                value={loginForm.email}
                 onChange={handleLoginChange}
-                placeholder="Username"
+                placeholder="your.email@example.com"
                 required
               />
             </label>
@@ -208,20 +231,15 @@ function App() {
                 type="tel"
                 value={loginForm.phone}
                 onChange={handleLoginChange}
-                placeholder="e.g. 555-0123"
+                placeholder="e.g. (410) 288-1622"
                 required
               />
             </label>
-            <button className="btn btn-primary" type="submit">
-              Sign in
+            <button className="btn btn-primary" type="submit" disabled={loginLoading}>
+              {loginLoading ? 'Signing in...' : 'Sign in'}
             </button>
           </form>
           {loginError && <p className="login-error">{loginError}</p>}
-          {!isLoginConfigured && (
-            <p className="login-config-warning">
-              Please contact the administrator for help to set the login credentials before signing in.
-            </p>
-          )}
         </div>
       </div>
     );
