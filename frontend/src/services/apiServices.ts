@@ -47,6 +47,12 @@ export const askAI = async (question: string) => {
   return response.data;
 };
 
+export const getAIInsights = async (startDate?: string, endDate?: string) => {
+  const params = startDate && endDate ? { startDate, endDate } : {};
+  const response = await api.get('/ai/insights', { params });
+  return response.data;
+};
+
 export const getPredefinedHabits = async () => {
   const response = await api.get('/predefined-habits');
   return response.data;

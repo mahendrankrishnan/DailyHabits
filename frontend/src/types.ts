@@ -20,3 +20,16 @@ export interface HabitWithLogs extends Habit {
   todayLog?: HabitLog;
 }
 
+export interface AIInsights {
+  period: { startDate: string; endDate: string };
+  metrics: {
+    habitsCount: number;
+    logsCount: number;
+    completedCount: number;
+    overallCompletionRate: number;
+    bestHabit: { id: number; name: string; completionRate: number } | null;
+    needsAttentionHabit: { id: number; name: string; completionRate: number } | null;
+  };
+  narrative: string;
+}
+

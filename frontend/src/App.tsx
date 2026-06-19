@@ -2,6 +2,7 @@ import { ChangeEvent, FormEvent, useEffect, useState, useCallback } from 'react'
 import HabitList from './components/Habit/HabitList';
 import HabitForm from './components/Habit/HabitForm';
 import AIChat from './components/OpenAI/AIChat';
+import AIInsightsCard from './components/OpenAI/AIInsightsCard';
 import WeeklyView from './components/Weekly-Views/WeeklyView';
 import Logo from './components/Logo';
 import Footer from './components/Footer/Footer';
@@ -309,6 +310,8 @@ function App() {
                 </button>
               </div>
             </div>
+
+            <AIInsightsCard />
 
             {showAIChat && <AIChat onClose={() => setShowAIChat(false)} />}
 
