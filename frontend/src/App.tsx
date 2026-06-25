@@ -9,7 +9,8 @@ import Footer from './components/Footer/Footer';
 import SessionTimeoutModal from './components/SessionTimeout/SessionTimeoutModal';
 import DeleteConfirmationDialog from './components/Habit/DeleteConfirmationDialog';
 import { Habit } from './types';
-import { getHabits, createHabit, updateHabit, deleteHabit, login } from './services/apiServices';
+import { getHabits, createHabit, updateHabit, deleteHabit, login, clearAuthSession, getAuthToken } from './services/apiServices';
+import { extractUserId } from './utils/authAccess';
 import { useSessionTimeout } from './hooks/useSessionTimeout';
 import './App.css';
 
@@ -29,12 +30,25 @@ function App() {
   const [loginError, setLoginError] = useState('');
   const [loginLoading, setLoginLoading] = useState(false);
   const [deleteDialog, setDeleteDialog] = useState<{ habitId: number; habitName: string } | null>(null);
+  const [restoringSession, setRestoringSession] = useState(true);
 
-  const handleLogout = useCallback(() => {
+  const clearSession = useCallback(() => {
     sessionStorage.removeItem('loggedInUser');
+    sessionStorage.removeItem('userId');
+    clearAuthSession();
     setIsLoggedIn(false);
     setCurrentUser('');
   }, []);
+
+  const handleLogout = useCallback(() => {
+    clearSession();
+  }, [clearSession]);
+
+  // TODO: re-enable MyDailyHabits role validation after login is confirmed working
+  // const validateUserAccess = useCallback(async (userId: number, token?: string) => {
+  //   const accessData = await getUserApplicationsRoles(userId, token);
+  //   return hasMyDailyHabitsAccess(accessData);
+  // }, []);
 
   // I want Session timeout configuration: 25 minutes warning, 30 minutes total
   const sessionTimeout = useSessionTimeout({
@@ -65,12 +79,39 @@ function App() {
   }, [searchQuery, isLoggedIn]);
 
   useEffect(() => {
-    const storedUser = sessionStorage.getItem('loggedInUser');
-    if (storedUser) {
-      setCurrentUser(storedUser);
-      setIsLoggedIn(true);
-    }
-  }, []);
+    const restoreSession = async () => {
+      const storedUser = sessionStorage.getItem('loggedInUser');
+      const storedUserId = sessionStorage.getItem('userId');
+      const storedToken = getAuthToken();
+
+      if (!storedUser || !storedUserId || !storedToken) {
+        clearSession();
+        setRestoringSession(false);
+        return;
+      }
+
+      try {
+        // TODO: re-enable MyDailyHabits role check after login is confirmed working
+        // const hasAccess = await validateUserAccess(Number(storedUserId), storedToken);
+        // if (!hasAccess) {
+        //   clearSession();
+        //   setLoginError(getAccessDeniedMessage());
+        //   return;
+        // }
+
+        setCurrentUser(storedUser);
+        setIsLoggedIn(true);
+      } catch (error) {
+        console.error('Session restore failed:', error);
+        clearSession();
+        setLoginError('Your session expired. Please sign in again.');
+      } finally {
+        setRestoringSession(false);
+      }
+    };
+
+    restoreSession();
+  }, [clearSession]);
 
   const handleCreateHabit = async (habitData: { name: string; description?: string; color?: string }) => {
     try {
@@ -170,20 +211,43 @@ function App() {
         password: loginForm.password,
       };
 
-      await login(credentials);
-      
-      // Store user information (adjust based on actual API response)
-      const userEmail = credentials.email;
-      sessionStorage.setItem('loggedInUser', userEmail);
-      setCurrentUser(userEmail);
+      const loginResponse = await login(credentials);
+      const userId = extractUserId(loginResponse);
+
+      if (!userId) {
+        throw new Error('Login succeeded but no user id was returned.');
+      }
+
+      // TODO: re-enable MyDailyHabits role check after login is confirmed working
+      // const accessData =
+      //   toUserApplicationsRoles(loginResponse, userId) ??
+      //   (await getUserApplicationsRoles(userId, loginResponse.token));
+      // const hasAccess = hasMyDailyHabitsAccess(accessData);
+      // if (!hasAccess) {
+      //   clearSession();
+      //   setLoginError(getAccessDeniedMessage());
+      //   return;
+      // }
+
+      sessionStorage.setItem('loggedInUser', credentials.email);
+      sessionStorage.setItem('userId', String(userId));
+      setCurrentUser(credentials.email);
       setIsLoggedIn(true);
       setLoginForm(initialLoginState);
       setLoginError('');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Login failed:', error);
+      clearSession();
+
+      const axiosLikeError = error as {
+        response?: { data?: { message?: string; error?: string }; status?: number };
+        message?: string;
+      };
+
       setLoginError(
-        error.response?.data?.message || 
-        error.message || 
+        axiosLikeError.response?.data?.error ||
+        axiosLikeError.response?.data?.message ||
+        axiosLikeError.message ||
         'Invalid email, password, or phone number. Please try again.'
       );
     } finally {
@@ -193,6 +257,18 @@ function App() {
 
 
   if (!isLoggedIn) {
+    if (restoringSession) {
+      return (
+        <div className="app login-page">
+          <Logo />
+          <div className="login-card">
+            <h2>Restoring session...</h2>
+            <p className="login-subtitle">Please wait.</p>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="app login-page">
         <Logo />

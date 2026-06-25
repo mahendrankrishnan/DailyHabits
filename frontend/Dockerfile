@@ -5,18 +5,21 @@ WORKDIR /app
 
 # Accept build arguments for Vite environment variables
 # These can be passed from docker-compose.yml or will be empty if not provided
+ARG VITE_AUTH_API_URL
 ARG VITE_LOGIN_USERNAME
 ARG VITE_LOGIN_PASSWORD
 ARG VITE_LOGIN_PHONE
 
 # Debug: Print build args (will show in build logs)
 RUN echo "Build args received:" && \
+    echo "VITE_AUTH_API_URL=${VITE_AUTH_API_URL:-/auth-api}" && \
     echo "VITE_LOGIN_USERNAME=${VITE_LOGIN_USERNAME:-NOT_SET}" && \
     echo "VITE_LOGIN_PASSWORD=${VITE_LOGIN_PASSWORD:+SET}" && \
     echo "VITE_LOGIN_PHONE=${VITE_LOGIN_PHONE:-NOT_SET}"
 
 # Set as environment variables for Vite to read during build
 # Vite reads environment variables prefixed with VITE_ at build time
+ENV VITE_AUTH_API_URL=${VITE_AUTH_API_URL:-/auth-api}
 ENV VITE_LOGIN_USERNAME=${VITE_LOGIN_USERNAME}
 ENV VITE_LOGIN_PASSWORD=${VITE_LOGIN_PASSWORD}
 ENV VITE_LOGIN_PHONE=${VITE_LOGIN_PHONE}

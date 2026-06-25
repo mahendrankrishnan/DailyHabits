@@ -48,12 +48,15 @@ services:
       context: .
       dockerfile: ./frontend/Dockerfile
       args:
+        VITE_AUTH_API_URL: ${VITE_AUTH_API_URL:-/auth-api}
         VITE_LOGIN_USERNAME: ${VITE_LOGIN_USERNAME:-}
         VITE_LOGIN_PASSWORD: ${VITE_LOGIN_PASSWORD:-}
         VITE_LOGIN_PHONE: ${VITE_LOGIN_PHONE:-}
     container_name: habit-tracker-frontend
     ports:
       - "3010:80"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       - backend
     restart: unless-stopped

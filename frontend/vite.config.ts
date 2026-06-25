@@ -11,6 +11,11 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
+      '/auth-api': {
+        target: 'http://127.0.0.1:4501',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/auth-api/, '/api'),
+      },
     },
   },
 });
