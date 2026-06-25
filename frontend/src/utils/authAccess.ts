@@ -2,13 +2,12 @@ import { LoginResponse, UserApplicationsRoles } from '../types';
 
 export const REQUIRED_APP_NAME = 'MyDailyHabits';
 
-export function hasMyDailyHabitsAccess(_data: UserApplicationsRoles): boolean {
-  // TODO: re-enable after login is confirmed working
-  // const app = data.applications?.find(
-  //   (application) => application.appName === REQUIRED_APP_NAME
-  // );
-  // return Boolean(app && app.roles?.length >= 1);
-  return true;
+export function hasMyDailyHabitsAccess(data: UserApplicationsRoles): boolean {
+  const app = data.applications?.find(
+    (application) => application.appName === REQUIRED_APP_NAME
+  );
+
+  return Boolean(app && app.roles?.length >= 1);
 }
 
 export function getAccessDeniedMessage(): string {

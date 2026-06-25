@@ -9,8 +9,8 @@ import Footer from './components/Footer/Footer';
 import SessionTimeoutModal from './components/SessionTimeout/SessionTimeoutModal';
 import DeleteConfirmationDialog from './components/Habit/DeleteConfirmationDialog';
 import { Habit } from './types';
-import { getHabits, createHabit, updateHabit, deleteHabit, login, clearAuthSession, getAuthToken } from './services/apiServices';
-import { extractUserId } from './utils/authAccess';
+import { getHabits, createHabit, updateHabit, deleteHabit, login, getUserApplicationsRoles, clearAuthSession, getAuthToken } from './services/apiServices';
+import { extractUserId, getAccessDeniedMessage, hasMyDailyHabitsAccess, toUserApplicationsRoles } from './utils/authAccess';
 import { useSessionTimeout } from './hooks/useSessionTimeout';
 import './App.css';
 
@@ -44,11 +44,10 @@ function App() {
     clearSession();
   }, [clearSession]);
 
-  // TODO: re-enable MyDailyHabits role validation after login is confirmed working
-  // const validateUserAccess = useCallback(async (userId: number, token?: string) => {
-  //   const accessData = await getUserApplicationsRoles(userId, token);
-  //   return hasMyDailyHabitsAccess(accessData);
-  // }, []);
+  const validateUserAccess = useCallback(async (userId: number, token?: string) => {
+    const accessData = await getUserApplicationsRoles(userId, token);
+    return hasMyDailyHabitsAccess(accessData);
+  }, []);
 
   // I want Session timeout configuration: 25 minutes warning, 30 minutes total
   const sessionTimeout = useSessionTimeout({
@@ -91,13 +90,12 @@ function App() {
       }
 
       try {
-        // TODO: re-enable MyDailyHabits role check after login is confirmed working
-        // const hasAccess = await validateUserAccess(Number(storedUserId), storedToken);
-        // if (!hasAccess) {
-        //   clearSession();
-        //   setLoginError(getAccessDeniedMessage());
-        //   return;
-        // }
+        const hasAccess = await validateUserAccess(Number(storedUserId), storedToken);
+        if (!hasAccess) {
+          clearSession();
+          setLoginError(getAccessDeniedMessage());
+          return;
+        }
 
         setCurrentUser(storedUser);
         setIsLoggedIn(true);
@@ -111,7 +109,7 @@ function App() {
     };
 
     restoreSession();
-  }, [clearSession]);
+  }, [clearSession, validateUserAccess]);
 
   const handleCreateHabit = async (habitData: { name: string; description?: string; color?: string }) => {
     try {
@@ -218,16 +216,15 @@ function App() {
         throw new Error('Login succeeded but no user id was returned.');
       }
 
-      // TODO: re-enable MyDailyHabits role check after login is confirmed working
-      // const accessData =
-      //   toUserApplicationsRoles(loginResponse, userId) ??
-      //   (await getUserApplicationsRoles(userId, loginResponse.token));
-      // const hasAccess = hasMyDailyHabitsAccess(accessData);
-      // if (!hasAccess) {
-      //   clearSession();
-      //   setLoginError(getAccessDeniedMessage());
-      //   return;
-      // }
+      const accessData =
+        toUserApplicationsRoles(loginResponse, userId) ??
+        (await getUserApplicationsRoles(userId, loginResponse.token));
+      const hasAccess = hasMyDailyHabitsAccess(accessData);
+      if (!hasAccess) {
+        clearSession();
+        setLoginError(getAccessDeniedMessage());
+        return;
+      }
 
       sessionStorage.setItem('loggedInUser', credentials.email);
       sessionStorage.setItem('userId', String(userId));
@@ -262,8 +259,8 @@ function App() {
         <div className="app login-page">
           <Logo />
           <div className="login-card">
-            <h2>Restoring session...</h2>
-            <p className="login-subtitle">Please wait.</p>
+            <h2>Checking access...</h2>
+            <p className="login-subtitle">Verifying your application roles.</p>
           </div>
         </div>
       );
