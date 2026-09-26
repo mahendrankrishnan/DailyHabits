@@ -259,7 +259,7 @@ function App() {
         <div className="app login-page">
           <Logo />
           <div className="login-card">
-            <h2>Checking access...</h2>
+            <h2>Checking access to your account...</h2>
             <p className="login-subtitle">Verifying your application roles.</p>
           </div>
         </div>
@@ -305,12 +305,12 @@ function App() {
                 type="tel"
                 value={loginForm.phone}
                 onChange={handleLoginChange}
-                placeholder="e.g. (410) 288-1622"
+                placeholder="e.g. (410) 336-7582"
                 required
               />
             </label>
             <button className="btn btn-primary" type="submit" disabled={loginLoading}>
-              {loginLoading ? 'Signing in...' : 'Sign in'}
+              {loginLoading ? 'Signing in...please wait' : 'Sign in'}
             </button>
           </form>
           {loginError && <p className="login-error">{loginError}</p>}
