@@ -28,7 +28,7 @@ function createAuthError(status: number, data: unknown): Error & {
     body.error ||
     body.message ||
     (status === 401
-      ? 'Invalid email, password, or phone number.'
+      ? 'Authentication failed.'
       : `Login failed (${status}).`);
 
   const error = new Error(message) as Error & {
